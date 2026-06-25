@@ -7,13 +7,23 @@ const gameBoard = (() => {
         board[i] = [];
 
         for(let j = 0; j < size; j++) {
-            board[i].push("");
+            board[i].push(createCell());
         }
     }
 
     const getBoard = () => board;
 
-    return {getBoard};
+    const displayBoard = () => {
+        for(let i = 0; i < size; i++) {
+            for(let j = 0; j < size; j++) {
+                process.stdout.write( String(board[i][j].getMarker()) );
+                //console.log(board[i][j].getMarker());
+            }
+            console.log();
+        }
+    }
+
+    return {getBoard, displayBoard};
 })();
 
 /*
@@ -25,22 +35,23 @@ for(let i = 0; i < 5; i++) {
 }
 */
 
-console.log(gameBoard.getBoard());
+//console.log(gameBoard.getBoard());
+gameBoard.displayBoard();
 
 function createCell() {
-    let value = 0;
+    let marker = 0;
 
-    const getValue = () => value;
+    const getMarker = () => marker;
     const markCell = (playerMarker) => {
-        value = playerMarker; //will be 1 or 2 for now instead of 'X' & 'O'
+        marker = playerMarker; //will be 1 or 2 for now instead of 'X' & 'O'
         //might change playerMarker to 'player'
     }
 
-    return {getValue, markCell};
+    return {getMarker, markCell};
 }
 
+/*
 const cell = createCell();
 
-console.log(cell.getValue());
-cell.markCell(2);
-console.log(cell.getValue());
+console.log(cell.getMarker());
+*/
