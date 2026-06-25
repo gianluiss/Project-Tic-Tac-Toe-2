@@ -26,3 +26,21 @@ for(let i = 0; i < 5; i++) {
 */
 
 console.log(gameBoard.getBoard());
+
+function createCell() {
+    let value = 0;
+
+    const getValue = () => value;
+    const markCell = (playerMarker) => {
+        value = playerMarker; //will be 1 or 2 for now instead of 'X' & 'O'
+        //might change playerMarker to 'player'
+    }
+
+    return {getValue, markCell};
+}
+
+const cell = createCell();
+
+console.log(cell.getValue());
+cell.markCell(2);
+console.log(cell.getValue());
