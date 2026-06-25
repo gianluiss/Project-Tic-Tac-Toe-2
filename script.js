@@ -23,8 +23,17 @@ const gameBoard = (() => {
         }
     }
 
-    return {getBoard, displayBoard};
+    // Make function to place a marker
+    const placeMarker = (row, col, player) => {
+        board[row][col].markCell(player);
+    }
+
+    return {getBoard, displayBoard, placeMarker};
 })();
+
+gameBoard.placeMarker(2,1, 1);
+//console.log(gameBoard.getBoard());
+gameBoard.displayBoard();
 
 /*
 for(let i = 0; i < 5; i++) {
@@ -35,8 +44,6 @@ for(let i = 0; i < 5; i++) {
 }
 */
 
-//console.log(gameBoard.getBoard());
-gameBoard.displayBoard();
 
 function createCell() {
     let marker = 0;
