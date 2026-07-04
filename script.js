@@ -107,14 +107,12 @@ const gameController = (() => {
     }
 
     // WIN HANDLING
-    const hasMatches = () => (hasMatchingRow() || hasMatchingCol());
+    const hasMatches = () => (hasMatchingRow() || hasMatchingCol() || hasMatchingDiagonal());
 
     const hasMatchingRow = () => {
         // Check if there's a matching row if none continue
         // if all cells in a row matches playerMarker hasMatchingRow = true;
         // else continue on to the next row
-
-        let hasMatching = false;
 
         // Checks horizontal matches
         for(const row of gameBoard.getBoard()) {
@@ -129,18 +127,15 @@ const gameController = (() => {
             }
 
             if(isMatching) {
-                hasMatching = true;
-                break;
+                return true;
             }
         }
-        return hasMatching;
+        return false;
     }
 
     const hasMatchingCol = () => {
 
         let board = gameBoard.getBoard();
-
-        let hasMatching = false;
 
         for(let col = 0; col < board.length; col++) {
             
@@ -154,12 +149,36 @@ const gameController = (() => {
             }
 
             if(isMatching) {
-                hasMatching = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    hasMatchingDiagonal = () => {
+
+        let board = gameBoard.getBoard();
+
+        // Check if center is occupied
+        let midIndex = Math.floor(board.length / 2);
+        if(board[midIndex][midIndex].getMarker() === 0) {
+            return false;
+        }
+
+        let hasLeftToRightMatch = true;
+        let hasRightToLeftMatch = true;
+
+        for(let i = 0; i < board.length; i++) {
+            if(board[i][i].getMarker() !== activePlayer.marker) {
+                hasLeftToRightMatch = false;
+            }
+            
+            if(board[i][(board.length-1) - i].getMarker() !== activePlayer.marker) {
+                hasRightToLeftMatch = false;
             }
         }
 
-
-        return hasMatching;
+        return (hasLeftToRightMatch || hasRightToLeftMatch);
     }
 
     return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches};
