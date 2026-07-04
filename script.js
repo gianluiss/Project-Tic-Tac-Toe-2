@@ -13,27 +13,20 @@ const gameBoard = (() => {
 
     const getBoard = () => board;
 
-    /* //For node outputs
-    const displayBoard = () => {
-        for(let i = 0; i < size; i++) {
-            for(let j = 0; j < size; j++) {
-                process.stdout.write( String(board[i][j].getMarker()) ); //uncomment if want to see console output
-                //console.log(board[i][j].getMarker());
-            }
-            console.log();
-        }
-    }
-    */
-
     const displayBoard = () => {
         /*
         console.log(`${board[0][0]} | ${board[0][1]} | ${board[0][2]}`);
         console.log(`${board[1][0]} | ${board[1][1]} | ${board[1][2]}`);
         console.log(`${board[2][0]} | ${board[2][1]} | ${board[2][2]}`);
         */
-
-        for(let i = 0; i < 3; i++) {
+        /*
+        for(let i = 0; i < board.length; i++) {
             console.log(`${board[i][0].getMarker()} | ${board[i][1].getMarker()} | ${board[i][2].getMarker()}`);
+        }
+        */
+
+        for(const row of board) {
+            console.log(`${row[0].getMarker()} | ${row[1].getMarker()} | ${row[2].getMarker()}`);
         }
     }
 
@@ -49,38 +42,59 @@ const gameBoard = (() => {
     const isWonStraight = (playerMarker) => {
 
         // Check horizontals
-        let isWon = true;
+        let isWon = false;
 
-        for(let row = 0; row < board.size(); row++) {
+        // Check if there's a matching row if none continue
 
-            if(!isWon) break;
+        // if all cells in a row matches playerMarker hasMatchingRow = true;
+        // else continue on to the next row
+        let hasMatchingRow = false;
+        for(const row of board) {
 
-            for(let col = 0; col < board.size(); col++) {
-                if(board[row][col] !== playerMarker) {
-                    isWon = false;
+            let isMatching = true;
+            for(const cell of row) {
+                if(cell.getMarker() !== playerMarker) {
+                    isMatching = false;
+                    break;
                 }
             }
+
+            if(isMatching) {
+                hasMatchingRow = true;
+                break;
+            }
         }
+        // WRONG LOGIC CURRENT LOGIC DOES NOT CHECK ALL
+        // NEED TO CHECK ALL BEFORE DECIDING TO BREAK
 
         return isWon;
     }
 
-    return {getBoard, displayBoard, placeMarker, isOccupied, isWon};
-})();
-
-//gameBoard.placeMarker(2,1, 1);
-//console.log(gameBoard.getBoard());
-//gameBoard.displayBoard();
-
 /*
-for(let i = 0; i < 5; i++) {
-    for(let j = 0; j < 5; j++) {
-        process.stdout.write('*');
+function hasHorizontalWin(playerMarker) {
+    let hasMatchingRow = false;
+    for(const row of board) {
+
+        let isMatching = true;
+        for(const cell of row) {
+            if(cell.getMarker() !== playerMarker) {
+                isMatching = false;
+                break;
+            }
+        }
+
+        if(isMatching) {
+            hasMatchingRow = true;
+            break;
+        }
     }
-    console.log();
+
+    return hasMatchingRow;
 }
 */
 
+    return {getBoard, displayBoard, placeMarker, isOccupied, isWonStraight};
+})();
 
 function createCell() {
     let marker = 0;
@@ -93,12 +107,6 @@ function createCell() {
 
     return {getMarker, markCell};
 }
-
-/*
-const cell = createCell();
-
-console.log(cell.getMarker());
-*/
 
 /*
  ** The gameController will be responsible for controlling the
@@ -158,8 +166,14 @@ const gameController = (() => {
         //board.displayBoard(); //console debugging
 
         // Check if player won
+        if(board.isWonStraight(activePlayer.marker)) {
+            console.log(`${activePlayer.name} has won!!!`);
+            alert(`${activePlayer.name} has won!!!`);
+        }
 
     }
+
+    // MIGHT PUT WIN HANDLING FUNCTION HERE
 
     return {switchPlayerTurn, getActivePlayer, playNewRound, playRound};
 })();
