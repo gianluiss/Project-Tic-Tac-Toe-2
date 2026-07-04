@@ -106,14 +106,15 @@ const gameController = (() => {
 
     }
 
-    // Win handling
-    const hasMatches = () => {
+    // WIN HANDLING
+    const hasMatches = () => (hasMatchingRow() || hasMatchingCol());
 
+    const hasMatchingRow = () => {
         // Check if there's a matching row if none continue
         // if all cells in a row matches playerMarker hasMatchingRow = true;
         // else continue on to the next row
 
-        let hasMatchingRow = false;
+        let hasMatching = false;
 
         // Checks horizontal matches
         for(const row of gameBoard.getBoard()) {
@@ -128,12 +129,37 @@ const gameController = (() => {
             }
 
             if(isMatching) {
-                hasMatchingRow = true;
+                hasMatching = true;
                 break;
             }
         }
+        return hasMatching;
+    }
 
-        return hasMatchingRow;
+    const hasMatchingCol = () => {
+
+        let board = gameBoard.getBoard();
+
+        let hasMatching = false;
+
+        for(let col = 0; col < board.length; col++) {
+            
+            let isMatching = true;
+
+            for(let row = 0; row < board.length; row++) {
+                if(board[row][col].getMarker() !== activePlayer.marker) {
+                    isMatching = false;
+                    break;
+                }
+            }
+
+            if(isMatching) {
+                hasMatching = true;
+            }
+        }
+
+
+        return hasMatching;
     }
 
     return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches};
@@ -156,9 +182,11 @@ while(true) {
         break;
     };
 
-    gameController.switchPlayerTurn();
+    //gameController.switchPlayerTurn();
 
+    /*
     if(prompt("Continue [0] to exit") === '0') {
         break;
     };
+    */
 }
