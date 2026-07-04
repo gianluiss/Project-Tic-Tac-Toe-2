@@ -15,11 +15,6 @@ const gameBoard = (() => {
 
     const displayBoard = () => {
         /*
-        console.log(`${board[0][0]} | ${board[0][1]} | ${board[0][2]}`);
-        console.log(`${board[1][0]} | ${board[1][1]} | ${board[1][2]}`);
-        console.log(`${board[2][0]} | ${board[2][1]} | ${board[2][2]}`);
-        */
-        /*
         for(let i = 0; i < board.length; i++) {
             console.log(`${board[i][0].getMarker()} | ${board[i][1].getMarker()} | ${board[i][2].getMarker()}`);
         }
@@ -38,62 +33,7 @@ const gameBoard = (() => {
     // Check current position if occupied
     const isOccupied = (row, col) => (board[row][col] !== 0);
 
-    // Win condition (Check if player won)
-    const isWonStraight = (playerMarker) => {
-
-        // Check horizontals
-        let isWon = false;
-
-        // Check if there's a matching row if none continue
-
-        // if all cells in a row matches playerMarker hasMatchingRow = true;
-        // else continue on to the next row
-        let hasMatchingRow = false;
-        for(const row of board) {
-
-            let isMatching = true;
-            for(const cell of row) {
-                if(cell.getMarker() !== playerMarker) {
-                    isMatching = false;
-                    break;
-                }
-            }
-
-            if(isMatching) {
-                hasMatchingRow = true;
-                break;
-            }
-        }
-        // WRONG LOGIC CURRENT LOGIC DOES NOT CHECK ALL
-        // NEED TO CHECK ALL BEFORE DECIDING TO BREAK
-
-        return isWon;
-    }
-
-/*
-function hasHorizontalWin(playerMarker) {
-    let hasMatchingRow = false;
-    for(const row of board) {
-
-        let isMatching = true;
-        for(const cell of row) {
-            if(cell.getMarker() !== playerMarker) {
-                isMatching = false;
-                break;
-            }
-        }
-
-        if(isMatching) {
-            hasMatchingRow = true;
-            break;
-        }
-    }
-
-    return hasMatchingRow;
-}
-*/
-
-    return {getBoard, displayBoard, placeMarker, isOccupied, isWonStraight};
+    return {getBoard, displayBoard, placeMarker, isOccupied};
 })();
 
 function createCell() {
@@ -160,22 +100,43 @@ const gameController = (() => {
         board.placeMarker(row, col, activePlayer.marker);
 
         // display current mark for debugging
-        console.log(actualBoard[row][col].getMarker());        
-
+        //console.log(actualBoard[row][col].getMarker());        
 
         //board.displayBoard(); //console debugging
 
-        // Check if player won
-        if(board.isWonStraight(activePlayer.marker)) {
-            console.log(`${activePlayer.name} has won!!!`);
-            alert(`${activePlayer.name} has won!!!`);
-        }
-
     }
 
-    // MIGHT PUT WIN HANDLING FUNCTION HERE
+    // Win handling
+    const hasMatches = () => {
 
-    return {switchPlayerTurn, getActivePlayer, playNewRound, playRound};
+        // Check if there's a matching row if none continue
+        // if all cells in a row matches playerMarker hasMatchingRow = true;
+        // else continue on to the next row
+
+        let hasMatchingRow = false;
+
+        // Checks horizontal matches
+        for(const row of gameBoard.getBoard()) {
+
+            let isMatching = true;
+
+            for(const cell of row) {
+                if(cell.getMarker() !== activePlayer.marker) {
+                    isMatching = false;
+                    break;
+                }
+            }
+
+            if(isMatching) {
+                hasMatchingRow = true;
+                break;
+            }
+        }
+
+        return hasMatchingRow;
+    }
+
+    return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches};
 })();
 
 /*
@@ -187,6 +148,14 @@ console.log(gameController.getActivePlayer());
 while(true) {
     gameController.playNewRound();
     gameController.playRound();
+
+    if(gameController.hasMatches()) {
+        console.log(`${gameController.getActivePlayer().marker} has won!!!`);
+        gameBoard.displayBoard();
+        alert(`${gameController.getActivePlayer().marker} has won!!!`);
+        break;
+    };
+
     gameController.switchPlayerTurn();
 
     if(prompt("Continue [0] to exit") === '0') {
