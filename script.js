@@ -14,15 +14,9 @@ const gameBoard = (() => {
     const getBoard = () => board;
 
     const displayBoard = () => {
-        /*
-        for(let i = 0; i < board.length; i++) {
-            console.log(`${board[i][0].getMarker()} | ${board[i][1].getMarker()} | ${board[i][2].getMarker()}`);
-        }
-        */
-
-        for(const row of board) {
+        board.forEach(row => {
             console.log(`${row[0].getMarker()} | ${row[1].getMarker()} | ${row[2].getMarker()}`);
-        }
+        });
     }
 
     // Make function to place a marker
@@ -101,7 +95,6 @@ const gameController = (() => {
 
         // display current mark for debugging
         //console.log(actualBoard[row][col].getMarker());        
-
         //board.displayBoard(); //console debugging
 
     }
@@ -185,19 +178,16 @@ const gameController = (() => {
 })();
 
 /*
-console.log(gameController.getActivePlayer());
-gameController.switchPlayerTurn();
-console.log(gameController.getActivePlayer());
-*/
-
 while(true) {
+    let playerMarker = gameController.getActivePlayer().marker
+
     gameController.playNewRound();
     gameController.playRound();
 
     if(gameController.hasMatches()) {
-        console.log(`${gameController.getActivePlayer().marker} has won!!!`);
+        console.log(`${playerMarker} has won!!!`);
         gameBoard.displayBoard();
-        alert(`${gameController.getActivePlayer().marker} has won!!!`);
+        alert(`${playerMarker} has won!!!`);
         break;
     };
 
@@ -208,4 +198,4 @@ while(true) {
         break;
     };
     */
-}
+//}
