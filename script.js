@@ -64,6 +64,12 @@ const gameController = (() => {
     ]
 
     let activePlayer = players[0];
+    let gameOver = false;
+
+    const isGameOver = () => gameOver;
+    const toggleGameOver = () => {
+        gameOver = gameOver ? false : true;
+    }
 
     const switchPlayerTurn = () => { 
         players[0] === activePlayer ? activePlayer = players[1] : activePlayer = players[0];
@@ -178,7 +184,7 @@ const gameController = (() => {
         return (hasLeftToRightMatch || hasRightToLeftMatch);
     }
 
-    return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches};
+    return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches, isGameOver, toggleGameOver};
 })();
 
 /*
@@ -211,13 +217,15 @@ while(true) {
 const grid = document.querySelector(".grid-container");
 
 grid.addEventListener('click', (e) => {
+
+    if(gameController.isGameOver()) {
+        return;
+    }
+
     const target = e.target.closest(".box");
-
-    //console.log(target.dataset.row, target.dataset.col);
-    //console.log(target.dataset.marker);
-    //console.log(target.dataset.marker === "");
-
+    if(!target) return;
     let playerMarker = gameController.getActivePlayer().marker;
+
 
     if(target.dataset.marker === "") {
 
@@ -237,15 +245,31 @@ grid.addEventListener('click', (e) => {
         const row = Number(target.dataset.row);
         const col = Number(target.dataset.col);
 
-        gameController.playRound(row, col)
+        gameController.playRound(row, col);
 
         //Win handling
         if(gameController.hasMatches()) {
             console.log(`${gameController.getActivePlayer().name} has won!`);
+            gameController.toggleGameOver();
+            return;
             // Will show a win indicator
         }
 
         gameController.switchPlayerTurn();
-        //gameBoard.displayBoard();
+
+        // Player turn visibility
+        const player1Span = document.querySelector(".player1-span");
+        const player2Span = document.querySelector(".player2-span");
+
+        if(gameController.getActivePlayer().name === "Player One") {
+            player2Span.classList.remove("player-turn");
+            player1Span.classList.add("player-turn");
+        }
+        else {
+            player1Span.classList.remove("player-turn");
+            player2Span.classList.add("player-turn");
+        }
+
+        gameBoard.displayBoard();
     }
 });
