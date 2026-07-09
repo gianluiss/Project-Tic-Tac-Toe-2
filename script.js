@@ -83,28 +83,6 @@ const gameController = (() => {
         console.log(`Now it is ${activePlayer.name}'s turn...`);
     }
 
-    // Will put a (row, column, player) parameter in the future, for now prompt
-    /* CONSOLE VERSION
-   
-        const actualBoard = board.getBoard();
-
-        let row = Number(prompt("Enter Row"));
-        let col = Number(prompt("Enter Column"));
-
-        while(actualBoard[row][col].getMarker() !== 0) {
-            console.log((actualBoard[row][col].getMarker()));
-            alert(`Please try again... Row: ${row} | Col: ${col} is occupied.`);
-            row = Number(prompt("Enter Row"));
-            col = Number(prompt("Enter Column"));
-        }
-
-        board.placeMarker(row, col, activePlayer.marker);
-
-        // display current mark for debugging
-        //console.log(actualBoard[row][col].getMarker());        
-        //board.displayBoard(); //console debugging
-    }
-    */
     const playRound = (row, col) => {
         board.placeMarker(row, col, activePlayer.marker);
     }
@@ -137,7 +115,6 @@ const gameController = (() => {
     }
 
     const hasMatchingCol = () => {
-
         let board = gameBoard.getBoard();
 
         for(let col = 0; col < board.length; col++) {
@@ -159,7 +136,6 @@ const gameController = (() => {
     }
 
     hasMatchingDiagonal = () => {
-
         let board = gameBoard.getBoard();
 
         // Check if center is occupied
@@ -187,37 +163,10 @@ const gameController = (() => {
     return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches, isGameOver, toggleGameOver};
 })();
 
-/*
-while(true) {
-    let playerMarker = gameController.getActivePlayer().marker
-
-    gameController.playNewRound();
-    gameController.playRound();
-
-    if(gameController.hasMatches()) {
-        console.log(`${playerMarker} has won!!!`);
-        gameBoard.displayBoard();
-        alert(`${playerMarker} has won!!!`);
-        break;
-    };
-
-    //gameController.switchPlayerTurn();
-
-    /*
-    if(prompt("Continue [0] to exit") === '0') {
-        break;
-    };
-    */
-//}
-
-// gameController
-// gameBoard
-
 // Event for placing marker
 const grid = document.querySelector(".grid-container");
 
 grid.addEventListener('click', (e) => {
-
     if(gameController.isGameOver()) {
         return;
     }
@@ -226,9 +175,7 @@ grid.addEventListener('click', (e) => {
     if(!target) return;
     let playerMarker = gameController.getActivePlayer().marker;
 
-
     if(target.dataset.marker === "") {
-
         const img = document.createElement("img");
         
         if(playerMarker === 1) {
@@ -249,15 +196,35 @@ grid.addEventListener('click', (e) => {
 
         //Win handling
         if(gameController.hasMatches()) {
-            console.log(`${gameController.getActivePlayer().name} has won!`);
+            //console.log(`${gameController.getActivePlayer().name} has won!`);
             gameController.toggleGameOver();
+            addWinIndicator();
             return;
-            // Will show a win indicator
         }
 
         gameController.switchPlayerTurn();
+        changePlayerTurnUI();
+        //gameBoard.displayBoard();
+    }
+});
 
-        // Player turn visibility
+function addWinIndicator() {
+    const indicator = document.createElement("div");
+    indicator.classList.add("win-indicator");
+
+    if(gameController.getActivePlayer().name === "Player One") {
+        indicator.textContent = "Game Over! Player One has Won!!!";
+    }
+    else {
+        indicator.textContent = "Game Over! Player Two has Won!!!";
+    }
+
+    const main = document.querySelector("main");
+    main.appendChild(indicator);
+}
+
+// Player turn visibility
+function changePlayerTurnUI() {
         const player1Span = document.querySelector(".player1-span");
         const player2Span = document.querySelector(".player2-span");
 
@@ -269,7 +236,4 @@ grid.addEventListener('click', (e) => {
             player1Span.classList.remove("player-turn");
             player2Span.classList.add("player-turn");
         }
-
-        gameBoard.displayBoard();
-    }
-});
+}
