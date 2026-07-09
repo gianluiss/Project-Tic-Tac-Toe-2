@@ -199,3 +199,29 @@ while(true) {
     };
     */
 //}
+
+// gameController
+// gameBoard
+
+// Event for placing marker
+const grid = document.querySelector(".grid-container");
+
+grid.addEventListener('click', (e) => {
+    const target = e.target.closest(".box");
+
+    console.log(target.dataset.row, target.dataset.col);
+
+    //console.log(target.dataset.marker);
+
+    console.log(target.dataset.marker === "");
+
+    if(target.dataset.marker === "") {
+        const img = document.createElement("img");
+        
+        //img.src = "./cross-svgrepo-com.svg"; //for x
+        img.src =  "./shape-oval-svgrepo-com.svg"//for o
+
+        target.append(img);
+        target.dataset.marker = "1";
+    }
+});

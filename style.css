@@ -77,6 +77,11 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+
+.box:hover {
+ background-color: #f8f5ddb0;
 }
 
 .box1 { grid-area: box1; border-top: none; border-left: none; }
