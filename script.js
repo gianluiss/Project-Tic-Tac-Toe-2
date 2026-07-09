@@ -71,14 +71,15 @@ const gameController = (() => {
 
     const getActivePlayer = () => activePlayer;
 
+    // For console debugging
     const playNewRound = () => {
         board.displayBoard(); //Console debugging
         console.log(`Now it is ${activePlayer.name}'s turn...`);
     }
 
     // Will put a (row, column, player) parameter in the future, for now prompt
-    const playRound = () => {
-
+    /* CONSOLE VERSION
+   
         const actualBoard = board.getBoard();
 
         let row = Number(prompt("Enter Row"));
@@ -96,7 +97,10 @@ const gameController = (() => {
         // display current mark for debugging
         //console.log(actualBoard[row][col].getMarker());        
         //board.displayBoard(); //console debugging
-
+    }
+    */
+    const playRound = (row, col) => {
+        board.placeMarker(row, col, activePlayer.marker);
     }
 
     // WIN HANDLING
@@ -209,19 +213,39 @@ const grid = document.querySelector(".grid-container");
 grid.addEventListener('click', (e) => {
     const target = e.target.closest(".box");
 
-    console.log(target.dataset.row, target.dataset.col);
-
+    //console.log(target.dataset.row, target.dataset.col);
     //console.log(target.dataset.marker);
+    //console.log(target.dataset.marker === "");
 
-    console.log(target.dataset.marker === "");
+    let playerMarker = gameController.getActivePlayer().marker;
 
     if(target.dataset.marker === "") {
+
         const img = document.createElement("img");
         
-        //img.src = "./cross-svgrepo-com.svg"; //for x
-        img.src =  "./shape-oval-svgrepo-com.svg"//for o
+        if(playerMarker === 1) {
+            img.src = "./cross-svgrepo-com.svg"
+            target.dataset.marker = "1";
+        }
+        else {
+            img.src = "./shape-oval-svgrepo-com.svg"
+            target.dataset.marker = "2";
+        }
 
         target.append(img);
-        target.dataset.marker = "1";
+
+        const row = Number(target.dataset.row);
+        const col = Number(target.dataset.col);
+
+        gameController.playRound(row, col)
+
+        //Win handling
+        if(gameController.hasMatches()) {
+            console.log(`${gameController.getActivePlayer().name} has won!`);
+            // Will show a win indicator
+        }
+
+        gameController.switchPlayerTurn();
+        //gameBoard.displayBoard();
     }
 });
