@@ -1,14 +1,22 @@
 const gameBoard = (() => {
     let size = 3
 
-    let board = [];
+    let board = createBoard();
 
-    for(let i = 0; i < size; i++) {
-        board[i] = [];
+    function createBoard() {
+        const tempBoard = [];
+        for(let i = 0; i < size; i++) {
+            tempBoard[i] = [];
 
-        for(let j = 0; j < size; j++) {
-            board[i].push(createCell());
+            for(let j = 0; j < size; j++) {
+                tempBoard[i].push(createCell());
+            }
         }
+        return tempBoard;
+    }
+
+    const resetBoard = () => {
+        board = createBoard();
     }
 
     const getBoard = () => board;
@@ -27,7 +35,7 @@ const gameBoard = (() => {
     // Check current position if occupied
     const isOccupied = (row, col) => (board[row][col] !== 0);
 
-    return {getBoard, displayBoard, placeMarker, isOccupied};
+    return {getBoard, displayBoard, placeMarker, isOccupied, resetBoard};
 })();
 
 function createCell() {
@@ -54,11 +62,13 @@ const gameController = (() => {
 
     const players = [
         {
-            name: "Player One",
+            name: "Player One", // default name
+            label: "Player One",
             marker: 1, // X
         },
         {
             name: "Player Two",
+            label: "Player Two",
             marker: 2, // O
         }
     ]
@@ -80,7 +90,7 @@ const gameController = (() => {
     // For console debugging
     const playNewRound = () => {
         board.displayBoard(); //Console debugging
-        console.log(`Now it is ${activePlayer.name}'s turn...`);
+        console.log(`Now it is ${activePlayer.label}'s turn...`);
     }
 
     const playRound = (row, col) => {
@@ -135,7 +145,7 @@ const gameController = (() => {
         return false;
     }
 
-    hasMatchingDiagonal = () => {
+    const hasMatchingDiagonal = () => {
         let board = gameBoard.getBoard();
 
         // Check if center is occupied
@@ -160,7 +170,11 @@ const gameController = (() => {
         return (hasLeftToRightMatch || hasRightToLeftMatch);
     }
 
-    return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches, isGameOver, toggleGameOver};
+    const reset = () => {
+        board.resetBoard();
+    }
+
+    return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches, isGameOver, toggleGameOver, reset};
 })();
 
 // Event for placing marker
@@ -196,7 +210,7 @@ grid.addEventListener('click', (e) => {
 
         //Win handling
         if(gameController.hasMatches()) {
-            //console.log(`${gameController.getActivePlayer().name} has won!`);
+            //console.log(`${gameController.getActivePlayer().label} has won!`);
             gameController.toggleGameOver();
             addWinIndicator();
             return;
@@ -212,7 +226,7 @@ function addWinIndicator() {
     const indicator = document.createElement("div");
     indicator.classList.add("win-indicator");
 
-    if(gameController.getActivePlayer().name === "Player One") {
+    if(gameController.getActivePlayer().label === "Player One") {
         indicator.textContent = "Game Over! Player One has Won!!!";
     }
     else {
@@ -225,15 +239,14 @@ function addWinIndicator() {
 
 // Player turn visibility
 function changePlayerTurnUI() {
-        const player1Span = document.querySelector(".player1-span");
-        const player2Span = document.querySelector(".player2-span");
+    const player1Span = document.querySelector(".player1-span");
+    const player2Span = document.querySelector(".player2-span");
 
-        if(gameController.getActivePlayer().name === "Player One") {
-            player2Span.classList.remove("player-turn");
-            player1Span.classList.add("player-turn");
-        }
-        else {
-            player1Span.classList.remove("player-turn");
-            player2Span.classList.add("player-turn");
-        }
+    if(gameController.getActivePlayer().label === "Player One") {
+        player2Span.classList.remove("player-turn");
+        player1Span.classList.add("player-turn");
+    }
+    else {
+        player1Span.classList.remove("player-turn"); player2Span.classList.add("player-turn");
+    }
 }
