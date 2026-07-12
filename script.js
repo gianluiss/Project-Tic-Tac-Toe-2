@@ -125,7 +125,7 @@ const gameController = (() => {
     }
 
     const hasMatchingCol = () => {
-        let board = gameBoard.getBoard();
+        const board = gameBoard.getBoard();
 
         for(let col = 0; col < board.length; col++) {
             
@@ -172,6 +172,8 @@ const gameController = (() => {
 
     const reset = () => {
         board.resetBoard();
+        activePlayer = players[0];
+        gameOver = false;
     }
 
     return {switchPlayerTurn, getActivePlayer, playNewRound, playRound, hasMatches, isGameOver, toggleGameOver, reset};
@@ -248,5 +250,38 @@ function changePlayerTurnUI() {
     }
     else {
         player1Span.classList.remove("player-turn"); player2Span.classList.add("player-turn");
+    }
+}
+
+
+// Event for reset button
+const resetBtn = document.querySelector(".reset-btn");
+
+resetBtn.addEventListener( "click", (e) => {
+    gameController.reset();
+    resetGridUI();
+});
+
+function resetGridUI() {
+    const crossImages = document.querySelectorAll(`img[src="./cross-svgrepo-com.svg"]`)
+    crossImages.forEach(img => img.remove());
+    const ovalImages = document.querySelectorAll(`img[src="./shape-oval-svgrepo-com.svg"]`)
+    ovalImages.forEach(img => img.remove());
+
+    const boxes = document.querySelectorAll(".box");
+    boxes.forEach(box => box.dataset.marker = "");
+
+    const player1Span = document.querySelector(".player1-span");
+    const player2Span = document.querySelector(".player2-span");
+
+    //console.log(player2Span.classList.contains("player-turn"));
+    if(player2Span.classList.contains("player-turn")) {
+        player2Span.classList.remove("player-turn");
+        player1Span.classList.add("player-turn");
+    }
+
+    const winIndicator = document.querySelector(".win-indicator");
+    if(winIndicator) {
+        winIndicator.remove();
     }
 }
